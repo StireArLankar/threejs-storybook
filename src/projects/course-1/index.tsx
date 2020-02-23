@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react'
 import { init } from './init'
 
-export const Home = () => {
+export default () => {
   useEffect(() => {
-    const stop = init('#scene')
-    return () => void stop()
+    init('#scene')
   }, [])
 
   return <div id='scene' />

@@ -46,6 +46,7 @@ const initResizeHandler = (
 }
 
 export const init = (selector: string) => {
+  let isMounted = true
   const container = document.querySelector(selector)
   const elements: Record<string, THREE.Object3D> = {}
 
@@ -67,9 +68,11 @@ export const init = (selector: string) => {
 
   const animateElement = (element: THREE.Object3D) =>
     function anim() {
-      requestAnimationFrame(anim)
-      element.rotation.z += 0.005
-      updateRenderer()
+      if (isMounted) {
+        requestAnimationFrame(anim)
+        element.rotation.z += 0.005
+        updateRenderer()
+      }
     }
 
   const loader = new GLTFLoader()
@@ -102,4 +105,6 @@ export const init = (selector: string) => {
   // }
 
   // document.addEventListener('mousemove', onMouseMove)
+
+  return () => (isMounted = false)
 }
