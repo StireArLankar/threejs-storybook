@@ -3,7 +3,8 @@ import { init } from './init'
 
 export default () => {
   useEffect(() => {
-    init('#scene')
+    const stop = init('#scene')
+    return () => void stop()
   }, [])
 
   return <div id='scene' />
