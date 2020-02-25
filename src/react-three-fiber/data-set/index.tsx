@@ -92,6 +92,7 @@ const Box = memo((props: BoxProps) => {
 
   const onPointerOut = (evt: any) => {
     evt.stopPropagation()
+    pointerRef.current = false
     setIsHovered(false)
   }
 
