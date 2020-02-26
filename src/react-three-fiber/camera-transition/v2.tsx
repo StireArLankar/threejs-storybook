@@ -1,4 +1,4 @@
-import React, { useState, useRef, memo, useContext, useMemo, useEffect } from 'react'
+import React, { useState, useRef, memo, useContext, useMemo, useEffect, Fragment } from 'react'
 import { Canvas, extend, useThree, useFrame } from 'react-three-fiber'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 //@ts-ignore
@@ -9,6 +9,9 @@ extend({ OrbitControls })
 
 const getPos = (ref: any): vector =>
   (ref.current ? Object.values(ref.current?.object.position) : [0, 2, 5]) as vector
+
+const subV = (a: vector, b: vector): vector => a.map((ai, i) => ai - b[i]) as vector
+const addV = (a: vector, b: vector): vector => a.map((ai, i) => ai + b[i]) as vector
 
 const arrayComparator = (a: any[], b: any) => {
   if (a.length !== b.length) {
@@ -52,7 +55,7 @@ const Controls = () => {
   const { active } = useContext(CtrContext)
 
   const [anim, set] = useSpring(() => ({
-    xyz: [active[0], 0.5, active[2]],
+    xyz: [0, 0, 0],
     config: {
       clamp: true,
       mass: 5,
@@ -71,7 +74,10 @@ const Controls = () => {
     set({ xyz: [active[0], 0.5, active[2]] })
   }, [active, set])
 
+  const oldPos = anim.xyz.getValue() as vector
   const oldCameraPos = getPos(ref)
+  const newPos = [active[0], 0.5, active[2]] as vector
+  const newCameraPos = addV(subV(newPos, oldPos), oldCameraPos)
 
   const anim2 = useSpring({
     config: {
@@ -87,7 +93,7 @@ const Controls = () => {
         immediate: true,
       },
       {
-        xyz: [active[0], 2, 5],
+        xyz: newCameraPos,
         immediate: false,
       },
     ],
@@ -160,21 +166,38 @@ export default () => {
   const [active, setActive] = useState<vector>([0, 0, 0])
 
   return (
-    <Canvas camera={{ position: [0, 2, 5] }} shadowMap>
-      <CtrContext.Provider value={{ active, setActive }}>
-        <Controls />
-        <ambientLight />
-        {/* <spotLight position={[5, 5, 5]} intensity={0.5} /> */}
-        <spotLight position={[0, 5, 5]} intensity={0.5} castShadow />
-        <Box position={[-4, 0, 0]} size={[1, 1, 1]} />
-        <Box position={[0, 0, 0]} size={[1, 1, 1]} />
-        <Box position={[4, 0, 0]} size={[1, 1, 1]} />
+    <Fragment>
+      <div
+        style={{
+          position: 'absolute',
+          top: 20,
+          left: 10,
+          display: 'flex',
+          flexDirection: 'column',
+          zIndex: 10,
+        }}
+      >
+        <button onClick={() => setActive([-4, 0.5, 0])}>Focus first</button>
+        <button onClick={() => setActive([0, 0.5, 0])}>Focus second</button>
+        <button onClick={() => setActive([4, 0.5, 0])}>Focus third</button>
+      </div>
+      <Canvas camera={{ position: [0, 2, 5] }} shadowMap>
+        <CtrContext.Provider value={{ active, setActive }}>
+          <Controls />
+          <ambientLight />
+          {/* <spotLight position={[5, 5, 5]} intensity={0.5} /> */}
+          <spotLight position={[0, 5, 5]} intensity={0.5} castShadow />
 
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
-          <planeBufferGeometry attach='geometry' args={[100, 100]} />
-          <meshPhysicalMaterial attach='material' color='rgba(100,150, 100, 0.5)' />
-        </mesh>
-      </CtrContext.Provider>
-    </Canvas>
+          <Box position={[-4, 0, 0]} size={[1, 1, 1]} />
+          <Box position={[0, 0, 0]} size={[1, 1, 1]} />
+          <Box position={[4, 0, 0]} size={[1, 1, 1]} />
+
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
+            <planeBufferGeometry attach='geometry' args={[100, 100]} />
+            <meshPhysicalMaterial attach='material' color='rgba(100, 150, 100)' />
+          </mesh>
+        </CtrContext.Provider>
+      </Canvas>
+    </Fragment>
   )
 }
