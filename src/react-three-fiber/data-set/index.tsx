@@ -55,8 +55,6 @@ const Controls = () => {
 interface BoxProps {
   position: [number, number, number]
   size: [number, number, number]
-  active: boolean
-  setActive: React.Dispatch<React.SetStateAction<number>>
   index: number
 }
 
@@ -112,17 +110,13 @@ const Box = memo((props: BoxProps) => {
 })
 
 const Boxes = () => {
-  const [active, setActive] = useState(0)
-
   const renderBoxes = () =>
     Array.from({ length: 16 }, (_, k) => k).map((_, index) => (
       <Box
         key={index}
         position={[index % 4, 0, Math.floor(index / 4)]}
         size={[0.5, index * 0.25 + 0.5, 0.5]}
-        active={active === index}
         index={index}
-        setActive={setActive}
       />
     ))
 
