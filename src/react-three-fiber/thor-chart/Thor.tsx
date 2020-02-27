@@ -1,25 +1,44 @@
-import React, { memo, useContext, useMemo, useRef } from 'react'
+import React, { memo, useMemo, useRef, useEffect } from 'react'
+import { vector } from './index'
 //@ts-ignore
-// import { useSpring, a } from 'react-spring/three'
-
-import { vector, CtrContext, arrayComparator } from './index'
+import { useSpring, a } from 'react-spring/three'
 
 interface ThorProps {
   position: vector
   arc: number
   index: number
   amount: number
+  active: boolean
+
+  onClick: () => void
 }
 
 export const Thor = memo((props: ThorProps) => {
-  const { position, arc, index, amount } = props
+  const { position, arc, index, amount, onClick, active } = props
 
-  const { setActive } = useContext(CtrContext)
+  // const pos = useMemo<vector>(() => [position[0], (index + 1) * 0.1, position[2]], [
+  //   position,
+  //   index,
+  // ])
 
-  const pos = useMemo<vector>(() => [position[0], (index + 1) * 0.1, position[2]], [
-    position,
-    index,
-  ])
+  const { pos } = useSpring({
+    pos: [position[0], (index + 1) * (active ? 0.3 : 0.1), position[2]],
+    config: {
+      mass: 20,
+      tension: 100,
+    },
+  })
+
+  // const pos = [position[0], (index + 1) * 0.3, position[2]]
+
+  console.log('test')
+  // const [{pos}, set] = useSpring(() => ({
+  //   pos: [position[0], (index + 1) * 0.1 ,position[2]]
+  // }))
+
+  // useEffect(() => {
+  //   set({pos: [position[0], (index + 1) * 0.2, position[2]]})
+  // }, [set, position, index, active])
 
   const size = amount - index
 
@@ -30,11 +49,11 @@ export const Thor = memo((props: ThorProps) => {
 
   const pointerRef = useRef(false)
 
-  const onClick = (evt: any) => {
+  const onItemClick = (evt: any) => {
     evt.stopPropagation()
     if (pointerRef.current) {
       pointerRef.current = false
-      setActive((prev) => (arrayComparator(prev, pos) ? prev : pos))
+      onClick()
     }
   }
 
@@ -48,16 +67,17 @@ export const Thor = memo((props: ThorProps) => {
   }
 
   return (
-    <mesh
+    <a.mesh
       onPointerOver={onPointerOver}
       onPointerOut={onPointerOut}
-      onPointerUp={onClick}
+      onPointerUp={onItemClick}
       onPointerDown={() => (pointerRef.current = true)}
       position={pos}
       rotation={[Math.PI / 2, 0, -Math.PI / 2]}
+      castShadow
     >
       <torusBufferGeometry attach='geometry' args={torusArgs as any} />
-      <meshLambertMaterial attach='material' color={`hsl(${index * 100}, 100%, 20%)`} />
-    </mesh>
+      <meshLambertMaterial attach='material' color={`hsl(${index * 100}, 100%, 30%)`} />
+    </a.mesh>
   )
 })

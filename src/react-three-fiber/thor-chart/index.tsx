@@ -1,11 +1,11 @@
-import React, { useState, useRef, memo, useContext, useMemo, useEffect } from 'react'
+import React, { useState, useRef, useContext, useEffect } from 'react'
 import { Canvas, extend, useThree, useFrame } from 'react-three-fiber'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 //@ts-ignore
-import { useSpring, a } from 'react-spring/three'
+import { useSpring } from 'react-spring/three'
 import * as THREE from 'three'
 
-import { Thor } from './Thor'
+import { ThorsGroup } from './ThorsGroup'
 
 extend({ OrbitControls })
 
@@ -38,6 +38,9 @@ export const CtrContext = React.createContext<CtxModel>({
   setActive: () => {},
 })
 
+const subV = (a: vector, b: vector): vector => a.map((ai, i) => ai - b[i]) as vector
+const addV = (a: vector, b: vector): vector => a.map((ai, i) => ai + b[i]) as vector
+
 const Controls = () => {
   const { camera, gl } = useThree()
   const ref = useRef<any>()
@@ -54,7 +57,7 @@ const Controls = () => {
   const { active } = useContext(CtrContext)
 
   const [anim, set] = useSpring(() => ({
-    xyz: [active[0], 0.5, active[2]],
+    xyz: [0, 0, 0],
     config: {
       clamp: true,
       mass: 5,
@@ -70,10 +73,13 @@ const Controls = () => {
   }))
 
   useEffect(() => {
-    set({ xyz: [active[0], 0.5, active[2]] })
+    set({ xyz: [active[0], 0, active[2]] })
   }, [active, set])
 
+  const oldPos = anim.xyz.getValue() as vector
   const oldCameraPos = getPos(ref)
+  const newPos = [active[0], 0, active[2]] as vector
+  const newCameraPos = addV(subV(newPos, oldPos), oldCameraPos)
 
   const anim2 = useSpring({
     config: {
@@ -89,7 +95,7 @@ const Controls = () => {
         immediate: true,
       },
       {
-        xyz: [active[0], 5, 0],
+        xyz: newCameraPos,
         immediate: false,
       },
     ],
@@ -106,21 +112,38 @@ const Controls = () => {
   )
 }
 
+const positions: vector[] = [
+  [0, 0, 0],
+  [10, 0, 0],
+  [-10, 0, 0],
+  [0, 0, 10],
+  [0, 0, -10],
+  [-10, 0, -10],
+  [10, 0, -10],
+  [-10, 0, 10],
+  [10, 0, 10],
+]
+
+const data = positions.map(() =>
+  Array.from({ length: Math.random() * 5 + 2 }, (_, k) =>
+    k === 0 ? 100 : Math.random() * 100
+  ).sort((a, b) => b - a)
+)
+
 export default () => {
-  const [active, setActive] = useState<vector>([0, 0, 0])
+  const [active, setActive] = useState<vector>(positions[0])
 
   return (
-    <Canvas camera={{ position: [0, 5, 0] }}>
+    <Canvas camera={{ position: [0, 10, 1] }} shadowMap>
       <CtrContext.Provider value={{ active, setActive }}>
         <Controls />
         <ambientLight />
-        <spotLight position={[0, 5, 0]} intensity={0.5} />
-        <Thor position={[0, 0, 0]} arc={100} index={0} amount={4} />
-        <Thor position={[0, 0, 0]} arc={75} index={1} amount={4} />
-        <Thor position={[0, 0, 0]} arc={50} index={2} amount={4} />
-        <Thor position={[0, 0, 0]} arc={25} index={3} amount={4} />
 
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+        {positions.map((pos, index) => (
+          <ThorsGroup key={index} position={pos} data={data[index]} />
+        ))}
+
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
           <planeBufferGeometry attach='geometry' args={[100, 100]} />
           <meshPhysicalMaterial attach='material' color='rgba(100,150, 100, 0.5)' />
         </mesh>
