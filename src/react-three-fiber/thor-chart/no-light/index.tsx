@@ -134,18 +134,18 @@ export default () => {
   const [active, setActive] = useState<vector>(positions[0])
 
   return (
-    <Canvas camera={{ position: [0, 10, 1] }} shadowMap>
+    <Canvas camera={{ position: [0, 10, 1] }}>
       <CtrContext.Provider value={{ active, setActive }}>
         <Controls />
-        <ambientLight />
+        <ambientLight intensity={1.4} />
 
         {positions.map((pos, index) => (
           <ThorsGroup key={index} position={pos} data={data[index]} />
         ))}
 
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
           <planeBufferGeometry attach='geometry' args={[100, 100]} />
-          <meshPhysicalMaterial attach='material' color='rgba(100,150, 100, 0.5)' />
+          <meshPhysicalMaterial attach='material' color='rgb(100, 150, 100)' />
         </mesh>
       </CtrContext.Provider>
     </Canvas>

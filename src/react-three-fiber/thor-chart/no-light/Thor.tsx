@@ -65,7 +65,7 @@ export const Thor = memo((props: ThorProps) => {
       castShadow
     >
       <torusBufferGeometry attach='geometry' args={torusArgs as any} />
-      <meshLambertMaterial attach='material' color={`hsl(${index * 100}, 100%, 30%)`} />
+      <meshLambertMaterial attach='material' color={`hsl(${index * 70}, 100%, 30%)`} />
     </a.mesh>
   )
 })
