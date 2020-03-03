@@ -47,13 +47,15 @@ const Panel = memo((props: any) => {
   )
 })
 
-const Panels = () => {
+const Panels = (props: any) => {
+  const { position = [0, 0, 0], rotation = [0, 0, 0] } = props
+
   return (
-    <group position={[0, 0, 10]}>
-      <gridHelper args={[100, 100]} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0.3]} />
-      <Panel position={[0, 0, 0]} rotation={[0, Math.PI, 0]} />
-      <Panel position={[8.7, 0, -15]} rotation={[0, Math.PI + (Math.PI * 2) / 3, 0]} />
-      <Panel position={[-8.7, 0, -15]} rotation={[0, Math.PI + (Math.PI * 2 * 2) / 3, 0]} />
+    <group position={position} rotation={rotation}>
+      <axesHelper args={[50]} />
+      <Panel position={[0, 0, 10]} rotation={[0, Math.PI, 0]} />
+      <Panel position={[8.7, 0, -5]} rotation={[0, Math.PI + (Math.PI * 2) / 3, 0]} />
+      <Panel position={[-8.7, 0, -5]} rotation={[0, Math.PI + (Math.PI * 2 * 2) / 3, 0]} />
     </group>
   )
 }
@@ -73,12 +75,26 @@ const Controls = () => {
 }
 
 export default () => {
+  const renderPanels = (length: number) =>
+    Array.from({ length }, (_, k) => {
+      const angle = (Math.PI * 2 * k) / length
+
+      return (
+        <Panels
+          key={k}
+          position={[50 * Math.sin(angle), 0, -50 * Math.cos(angle)]}
+          rotation={[0, -angle, 0]}
+        />
+      )
+    })
+
   return (
-    <Canvas camera={{ position: [0, 5, 30] }}>
+    <Canvas camera={{ position: [0, 70, 0] }}>
       <Controls />
       <ambientLight intensity={0.3} />
       <Light position={[0, 10, 10]} />
-      <Panels />
+
+      {renderPanels(5)}
     </Canvas>
   )
 }
