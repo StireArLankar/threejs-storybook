@@ -1,24 +1,15 @@
-import React, { memo } from 'react'
+import React, { Suspense, memo, useState, useEffect, Fragment, useContext } from 'react'
 //@ts-ignore
 import { a, useSpring } from 'react-spring/three'
-import { Canvas, useUpdate } from 'react-three-fiber'
+import { Canvas, useUpdate, useLoader } from 'react-three-fiber'
 import { useDrag } from 'react-use-gesture'
 import * as THREE from 'three'
 
-const Light = ({ position }: any) => {
-  const mesh = new THREE.DirectionalLight(0xffffff)
-
-  return (
-    <group>
-      <primitive object={mesh} position={position} intensity={0.3} />
-      <directionalLightHelper args={[mesh, 10, 'white'] as any} />
-    </group>
-  )
-}
+const ctx = React.createContext<THREE.Texture>(null as any)
 
 const Panel = memo((props: any) => {
-  const length = 14
-  const width = 9
+  const length = 19
+  const width = 10
 
   const shape = new THREE.Shape()
   shape.moveTo(0, 0)
@@ -41,45 +32,99 @@ const Panel = memo((props: any) => {
     geometry.center()
   }, [])
 
+  const nepu = useContext(ctx)
+
   return (
-    <mesh {...props}>
-      <extrudeBufferGeometry ref={ref} attach='geometry' args={[shape, extrudeSettings]} />
-      <meshPhongMaterial attach='material' color='red' />
-      <axesHelper args={[10]} />
-    </mesh>
+    <group {...props}>
+      <mesh>
+        <extrudeBufferGeometry ref={ref} attach='geometry' args={[shape, extrudeSettings]} />
+        {/* <meshPhysicalMaterial
+          attach='material'
+          color='#4c71ac'
+          metalness={0.5}
+          reflectivity={3.0}
+          roughness={10}
+        /> */}
+        <meshPhongMaterial attach='material' color='#4c71ac' shininess={50} />
+      </mesh>
+      <Suspense fallback={null}>
+        <mesh position={[0, 0, 1.3]}>
+          <meshPhongMaterial attach='material' map={nepu} shininess={100} />
+          <planeBufferGeometry attach='geometry' args={[19, 10, 1]} />
+        </mesh>
+      </Suspense>
+    </group>
   )
 })
+
+const updateCurrentIndex = (x: number, width: number) => {
+  const offset = x % width
+
+  const diff = (x - offset) / width
+
+  if (offset > width / 2) {
+    return diff + 1
+  } else if (offset < -width / 2) {
+    return diff - 1
+  }
+
+  return diff
+}
+
+const deg120 = (Math.PI * 2) / 3
+
+const PanelsRaw = () => (
+  <Fragment>
+    <Panel position={[0, 0, 10]} rotation={[0, 0, 0]} />
+    <Panel position={[8.7, 0, -5]} rotation={[0, deg120, 0]} />
+    <Panel position={[-8.7, 0, -5]} rotation={[0, deg120 * 2, 0]} />
+  </Fragment>
+)
 
 const Panels = (props: any) => {
   const { position = [0, 0, 0] } = props
 
+  const [selected, setSelected] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
+
   const [{ rotation }, set] = useSpring(() => ({
     rotation: [0, 0, 0],
-    config: { mass: 3, friction: 40, tension: 800 },
+    config: { mass: 3, friction: 40, tension: 600 },
   }))
 
+  useEffect(() => {
+    set({ rotation: [0, selected * deg120, 0] })
+  }, [selected, set, isDragging])
+
   const bind = useDrag(
-    ({ offset: [x], down, ...props }) => {
-      set({ rotation: [0, x / 300, 0] })
+    ({ movement: [x], down }) => {
+      if (down) {
+        setIsDragging(true)
+        set({ rotation: [0, x / (Math.PI * 100), 0] })
+      } else {
+        setIsDragging(false)
+        setSelected(updateCurrentIndex(x / (Math.PI * 100), deg120))
+      }
     },
-    { eventOptions: { pointer: true } }
+    { eventOptions: { pointer: true }, initial: () => [rotation.getValue()[1] * Math.PI * 100, 0] }
   )
 
   return (
     <a.group position={position} rotation={rotation} {...bind()}>
-      <Panel position={[0, 0, 10]} rotation={[0, Math.PI, 0]} />
-      <Panel position={[8.7, 0, -5]} rotation={[0, Math.PI + (Math.PI * 2) / 3, 0]} />
-      <Panel position={[-8.7, 0, -5]} rotation={[0, Math.PI + (Math.PI * 2 * 2) / 3, 0]} />
+      <PanelsRaw />
     </a.group>
   )
 }
 
 export default () => {
+  const nepu = useLoader(THREE.TextureLoader, process.env.PUBLIC_URL + '/assets/nepuuu.png')
+
   return (
     <Canvas camera={{ position: [0, 0, 0] }}>
-      <ambientLight intensity={0.3} />
-      <Light position={[0, 10, 10]} />
-      <Panels position={[0, 0, -30]} />
+      <ctx.Provider value={nepu}>
+        <spotLight position={[0, 5, 10]} distance={90} intensity={1.2} decay={2} />
+        <Panels position={[0, 0, -30]} />
+      </ctx.Provider>
     </Canvas>
   )
 }
