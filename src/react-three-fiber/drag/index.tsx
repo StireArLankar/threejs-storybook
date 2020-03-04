@@ -9,6 +9,8 @@ function Dodecahedron() {
 
   const aspect = size.width / viewport.width
 
+  console.log(aspect, size, viewport)
+
   const [spring, set] = useSpring(() => ({
     scale: [1, 1, 1],
     position: [0, 0, 0],
