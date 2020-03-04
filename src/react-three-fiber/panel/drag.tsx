@@ -109,22 +109,24 @@ const Panels = (props: any) => {
     { eventOptions: { pointer: true }, initial: () => [rotation.getValue()[1] * Math.PI * 100, 0] }
   )
 
+  const nepu = useLoader(THREE.TextureLoader, process.env.PUBLIC_URL + '/assets/nepuuu.png')
+
   return (
-    <a.group position={position} rotation={rotation} {...bind()}>
-      <PanelsRaw />
-    </a.group>
+    <ctx.Provider value={nepu}>
+      <a.group position={position} rotation={rotation} {...bind()}>
+        <PanelsRaw />
+      </a.group>
+    </ctx.Provider>
   )
 }
 
 export default () => {
-  const nepu = useLoader(THREE.TextureLoader, process.env.PUBLIC_URL + '/assets/nepuuu.png')
-
   return (
     <Canvas camera={{ position: [0, 0, 0] }}>
-      <ctx.Provider value={nepu}>
-        <spotLight position={[0, 5, 10]} distance={90} intensity={1.2} decay={2} />
+      <spotLight position={[0, 5, 10]} distance={90} intensity={1.2} decay={2} />
+      <Suspense fallback={null}>
         <Panels position={[0, 0, -30]} />
-      </ctx.Provider>
+      </Suspense>
     </Canvas>
   )
 }
