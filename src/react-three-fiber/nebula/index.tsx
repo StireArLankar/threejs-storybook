@@ -1,7 +1,6 @@
-import React, { memo, useState, Suspense, useRef } from 'react'
-import { Canvas, useUpdate, useLoader, useFrame } from 'react-three-fiber'
+import React, { memo, Suspense, useRef } from 'react'
+import { Canvas, useFrame, useLoader } from 'react-three-fiber'
 import * as THREE from 'three'
-import { InstancedClouds } from './InstancedClouds'
 
 const Clouds = () => {
   const smoke = useLoader(THREE.TextureLoader, process.env.PUBLIC_URL + '/assets/smoke.png')
@@ -9,12 +8,6 @@ const Clouds = () => {
   const renderClouds = () => Array.from({ length: 50 }, (_, k) => <Cloud texture={smoke} key={k} />)
 
   return <group>{renderClouds()}</group>
-}
-
-const Clouds2 = () => {
-  const smoke = useLoader(THREE.TextureLoader, process.env.PUBLIC_URL + '/assets/smoke.png')
-
-  return <InstancedClouds texture={smoke} length={50} />
 }
 
 interface CloudProps {
@@ -45,7 +38,7 @@ const Cloud = memo((props: CloudProps) => {
 export default () => {
   return (
     <Canvas
-      camera={{ position: [0, 5, 1], rotation: [1.16, -0.12, 0.27] }}
+      camera={{ position: [0, 5, 1], rotation: [1.16, -0.12, 0.27], fov: 60 }}
       style={{ backgroundColor: 'rgb(6, 82, 78)' }}
     >
       <Suspense fallback={null}>
@@ -57,7 +50,7 @@ export default () => {
       <pointLight args={['#d8547e', 50, 450, 1.7]} position={[100, 300, 100]} />
       <pointLight args={['#3677ac', 50, 450, 1.7]} position={[300, 300, 200]} />
       //@ts-ignore
-      <fog attach='fog' args={['#03544e', 0.001]} />
+      <fog attach='fog' args={['#03544e', 0.01]} />
     </Canvas>
   )
 }
