@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "https://stirearlankar.github.io/threejs-storybook",
   "dependencies": {
+    "postprocessing": "^6.12.2",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-scripts": "3.4.0",
