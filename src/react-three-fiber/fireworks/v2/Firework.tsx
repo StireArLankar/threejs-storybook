@@ -8,8 +8,8 @@ const getStartAndEnd = ({ x, y }: { x: number; y: number }) => {
   const z = randInt(-100, 100)
 
   return {
-    start: new THREE.Vector3(randInt(x - 100, x + 100), y - 800, randInt(z - 100, z + 100)),
-    end: new THREE.Vector3(randInt(x - 100, x + 100), y, randInt(z - 100, z + 100)),
+    start: new THREE.Vector3(randInt(x - 100, x + 100), y - 800, z),
+    end: new THREE.Vector3(randInt(x - 100, x + 100), y, z),
   }
 }
 
@@ -74,20 +74,16 @@ export const Firework = (props: FireworkProps) => {
       const { end } = startAndEnd.current
       const particle = geometry.vertices[0]
 
-      particle.x += (end.x - particle.x) / 20
-      particle.y += (end.y - particle.y) / 20
-      particle.z += (end.z - particle.z) / 20
+      particle.lerp(end, 0.05)
 
       if (Math.ceil(particle.y) > end.y - 20) {
         setIsExploded(true)
       }
     } else {
-      for (let i = 0; i < length; i++) {
-        const particle = geometry.vertices[i]
-        particle.x += (endCoords[i].x - particle.x) / 20
-        particle.y += (endCoords[i].y - particle.y) / 20
-        particle.z += (endCoords[i].z - particle.z) / 20
-      }
+      geometry.vertices.forEach((particle, i) => {
+        particle.lerp(endCoords[i], 0.05)
+      })
+
       material.current.opacity -= 0.015
     }
 
