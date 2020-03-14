@@ -12461,6 +12461,11 @@ three@^0.113.2:
   resolved "https://registry.yarnpkg.com/three/-/three-0.113.2.tgz#04791d491fe4359330f9dbe7b767db18bfb35d67"
   integrity sha512-x3vrKW41/UtbWbWduWKGlfIc043SvHWr3YltehYq+UGb9YglQ2oztNGvl2eut05JtNSmP11Mh3t6Xak5/0e+Fg==
 
+threejs-meshline@^2.0.10:
+  version "2.0.10"
+  resolved "https://registry.yarnpkg.com/threejs-meshline/-/threejs-meshline-2.0.10.tgz#5dc31037055ca4135f1232216427d075ac0d51bc"
+  integrity sha512-X9h8RU0RCNaG8XSUipNoVUXw2g90rs4QlBFAtYRVWm6JZVXuVfsVa9DxLpIVIZwkblvCaZrOy2hPkuvW8DcPWw==
+
 throat@^4.0.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/throat/-/throat-4.1.0.tgz#89037cbc92c56ab18926e6ba4cbb200e15672a6a"
