@@ -15,9 +15,9 @@ export const Particles = (props: ParticlesProps) => {
   const mesh = useRef<any>()
   const light = useRef<any>()
 
-  const { size, viewport } = useThree()
+  const { viewport } = useThree()
 
-  const aspect = size.width / viewport.width
+  const aspect = viewport.factor
 
   const dummy = useMemo(() => new THREE.Object3D(), [])
 

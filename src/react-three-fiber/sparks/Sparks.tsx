@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import React, { useRef, useMemo } from 'react'
+import React, { useRef, useMemo, memo } from 'react'
 import { extend, useFrame, useThree } from 'react-three-fiber'
 import lerp from '../../utils/lerp'
 //@ts-ignore
@@ -7,7 +7,7 @@ import * as meshline from 'threejs-meshline'
 
 extend(meshline)
 
-const r = () => Math.max(0.2, Math.random())
+const r = (radius: number) => radius * Math.max(0.2, Math.random())
 
 export interface FatlineProps {
   curve: any
@@ -52,19 +52,19 @@ export interface SparksProps {
   radius?: number
 }
 
-export default function Sparks(props: SparksProps) {
+export const Sparks = memo((props: SparksProps) => {
   const { mouse, count, colors, radius = 10 } = props
 
   const lines = useMemo(
     () =>
       Array.from({ length: count }, (_, index) => {
-        const pos = new THREE.Vector3(Math.sin(0) * radius * r(), Math.cos(0) * radius * r(), 0)
+        const pos = new THREE.Vector3(Math.sin(0) * r(radius), Math.cos(0) * r(radius), 0)
+
         const points = Array.from({ length: 30 }, (_, index) => {
           const angle = (index / 20) * Math.PI * 2
+
           return pos
-            .add(
-              new THREE.Vector3(Math.sin(angle) * radius * r(), Math.cos(angle) * radius * r(), 0)
-            )
+            .add(new THREE.Vector3(Math.sin(angle) * r(radius), Math.cos(angle) * r(radius), 0))
             .clone()
         })
 
@@ -82,22 +82,14 @@ export default function Sparks(props: SparksProps) {
 
   const ref = useRef<any>()
 
-  const { size, viewport } = useThree()
+  const { viewport } = useThree()
 
-  const aspect = size.width / viewport.width
+  const aspect = viewport.factor
 
   useFrame(() => {
     if (ref.current) {
-      ref.current.rotation.x = lerp(
-        ref.current.rotation.x,
-        0 + mouse.current[1] / aspect / 200,
-        0.1
-      )
-      ref.current.rotation.y = lerp(
-        ref.current.rotation.y,
-        0 + mouse.current[0] / aspect / 400,
-        0.1
-      )
+      ref.current.rotation.x = lerp(ref.current.rotation.x, mouse.current[1] / (aspect * 200), 0.1)
+      ref.current.rotation.y = lerp(ref.current.rotation.y, mouse.current[0] / (aspect * 400), 0.1)
     }
   })
 
@@ -110,4 +102,4 @@ export default function Sparks(props: SparksProps) {
       </group>
     </group>
   )
-}
+})

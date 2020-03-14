@@ -1,9 +1,9 @@
 import * as THREE from 'three'
-import React, { Suspense, useState, useCallback, useEffect, useRef, useMemo } from 'react'
+import React, { Suspense, useState, useCallback, useRef, useMemo } from 'react'
 import { Canvas, useFrame, useThree } from 'react-three-fiber'
 import lerp from '../../utils/lerp'
 import { Effects } from './Effects'
-import Sparks from './Sparks'
+import { Sparks } from './Sparks'
 import { Particles } from './Particles'
 
 function Ellipse(props: any) {
@@ -58,6 +58,8 @@ function Number({ mouse }: any) {
   )
 }
 
+const colors = ['#A2CCB6', '#FCEEB5', '#EE786E', '#e0feff', 'lightpink', 'lightblue']
+
 export default () => {
   const [down, set] = useState(false)
 
@@ -68,11 +70,6 @@ export default () => {
       (mouse.current = [x - window.innerWidth / 2, y - window.innerHeight / 2]),
     []
   )
-
-  useEffect(() => {
-    document.body.style.cursor =
-      "url('https://raw.githubusercontent.com/chenglou/react-motion/master/demos/demo8-draggable-list/cursor.png') 39 39, auto"
-  }, [])
 
   return (
     <Canvas
@@ -90,11 +87,7 @@ export default () => {
       <pointLight distance={100} intensity={4} color={'white' as any} />
       <Number mouse={mouse} />
       <Particles count={10000} mouse={mouse} />
-      <Sparks
-        count={20}
-        mouse={mouse}
-        colors={['#A2CCB6', '#FCEEB5', '#EE786E', '#e0feff', 'lightpink', 'lightblue']}
-      />
+      <Sparks count={20} mouse={mouse} colors={colors} />
       <Effects down={down} />
     </Canvas>
   )

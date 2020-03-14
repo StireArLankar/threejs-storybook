@@ -1,4 +1,4 @@
-//@ts-nocheck
+// @ts-nocheck
 import * as THREE from 'three'
 import React, { useRef, useMemo, useEffect } from 'react'
 import { extend, useThree, useFrame } from 'react-three-fiber'
@@ -7,15 +7,11 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
 import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass'
-import { GlitchPass } from './post/Glitchpass'
-import { WaterPass } from './post/Waterpass'
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader'
 
-extend({ EffectComposer, ShaderPass, RenderPass, WaterPass, UnrealBloomPass, FilmPass, GlitchPass })
+extend({ EffectComposer, ShaderPass, RenderPass, UnrealBloomPass, FilmPass })
 
-export interface EffectsProps {
-  down?: boolean
-}
-export const Effects = ({ down }: EffectsProps) => {
+export const Effects = () => {
   const composer = useRef<any>()
 
   const { scene, gl, size, camera } = useThree()
@@ -29,9 +25,13 @@ export const Effects = ({ down }: EffectsProps) => {
   return (
     <effectComposer ref={composer} args={[gl]}>
       <renderPass attachArray='passes' scene={scene} camera={camera} />
-      <waterPass attachArray='passes' factor={1.5} />
-      <unrealBloomPass attachArray='passes' args={[aspect, 2, 1, 0]} />
-      <glitchPass attachArray='passes' factor={down ? 1 : 0} />
+      <unrealBloomPass attachArray='passes' args={[aspect, 1, 1, 0]} />
+      <shaderPass
+        attachArray='passes'
+        args={[FXAAShader]}
+        material-uniforms-resolution-value={[1 / size.width, 1 / size.height]}
+        renderToScreen
+      />
     </effectComposer>
   )
 }
