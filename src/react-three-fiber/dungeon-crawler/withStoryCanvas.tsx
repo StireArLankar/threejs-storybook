@@ -36,7 +36,7 @@ export const withStoryCanvas = (storyfn: any) => {
     <Canvas camera={{ position: [0, 5, 20] }} shadowMap>
       <Controls />
       <ambientLight intensity={0.03} />
-      <Light position={[0, 5, 0]} />
+      <Light position={[0, 0, 0]} />
       <TextureProvider>{storyfn()}</TextureProvider>
       <axesHelper args={[10]} />
     </Canvas>

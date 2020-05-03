@@ -2,6 +2,7 @@ import React from 'react'
 import Floor from './Floor'
 import Wall from './Wall'
 import Ceiling from './Ceiling'
+import Torch from './Torch'
 import { withStoryCanvas } from './withStoryCanvas'
 import * as Tiles from './Tiles'
 
@@ -45,3 +46,5 @@ export const pathExample = () => (
     <Tiles.Tile1Ways position-x={30} />
   </>
 )
+
+export const torch = () => <Torch />
