@@ -44,7 +44,7 @@ const Box = () => {
       scale={scale}
     >
       <boxBufferGeometry attach='geometry' args={[1, 1, 1]} />
-      <a.meshBasicMaterial attach='material' color={color} />
+      <a.meshPhongMaterial attach='material' color={color} />
     </a.mesh>
   )
 }
@@ -54,7 +54,7 @@ export default () => {
     <Canvas>
       <Controls />
       {/* <ambientLight /> */}
-      {/* <pointLight position={[10, 10, 10]} /> */}
+      <pointLight position={[10, 10, 10]} />
       <Box />
       <Effects />
     </Canvas>
