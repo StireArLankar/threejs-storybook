@@ -9,8 +9,8 @@ type Props = ReactThreeFiber.Object3DNode<THREE.Group, typeof THREE.Group>
 
 const Light = ({ position }: any) => {
   return (
-    <group>
-      <pointLight position={position} intensity={0.05} />
+    <group position-y={4} position={position}>
+      <pointLight intensity={0.05} />
       <mesh>
         <sphereBufferGeometry attach='geometry' args={[0.5, 32, 32]} />
         <meshBasicMaterial attach='material' color='red' />

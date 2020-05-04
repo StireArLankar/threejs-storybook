@@ -10,7 +10,7 @@ export default memo((props: Props) => {
 
   return (
     <mesh receiveShadow rotation-x={Math.PI * -0.5} position-y={-5} {...props}>
-      <meshPhongMaterial attach='material' map={texture} side={THREE.DoubleSide} />
+      <meshLambertMaterial attach='material' map={texture} side={THREE.DoubleSide} />
       <planeGeometry attach='geometry' args={[10, 10]} />
     </mesh>
   )
