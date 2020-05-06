@@ -1,0 +1,68 @@
+@import url(https://fonts.googleapis.com/css?family=News+Cycle&display=swap);
+:root {
+  font-size: 20px;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  color: #606063;
+  overflow: hidden;
+  font-family: 'News Cycle', sans-serif;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.canvas > div {
+  z-index: 1;
+}
+
+.loading {
+  padding: 10px;
+  -webkit-transform: translate3d(-50%, -50%, 0);
+          transform: translate3d(-50%, -50%, 0);
+}
+
+.scrollArea {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+  background: -webkit-gradient(linear, left top, left bottom, from(darkseagreen), to(aquamarine));
+  background: linear-gradient(darkseagreen, aquamarine);
+}
+
+#root,
+#scene,
+canvas {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  touch-action: none;
+}
+
+
+/*# sourceMappingURL=main.33249400.chunk.css.map*/
